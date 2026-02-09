@@ -34,23 +34,25 @@ def RNA_Protein(rna, codon_aa_dict):
         protein += aa # if not, add to protein
     return protein
 
+# mot
 
-def Change_base(seq):
+def Change_base(seq):     # mot change base
     index = random.randrange(0, len(seq))
+    original_base = seq[index]
     bases = ["A", "T", "G", "C"]
+    bases.remove(original_base) 
     new_base = random.choice(bases)
     
     mot_seq = list(seq)
     mot_seq[index] = new_base
     return "".join(mot_seq)
 
-
-def Delete_BASE(seq):
+def Delete_BASE(seq): #mot delete base
     index = random.randrange(len(seq))
     k = random.randint(1, 3)
     return seq[:index] + seq[index+k:]
   
-def Insert_BASE(seq):
+def Insert_BASE(seq): # mot insert base
     index = random.randrange(len(seq))
     k = random.randint(1, 3)
     bases = ["A", "T", "G", "C"]
@@ -63,7 +65,7 @@ def Insert_BASE(seq):
 
 
 
-def Comp_seq(old,new):
+def Comp_seq(old,new): # compere the dna before and after the mot
   if len(old)!=len(new):
      return 1
 
@@ -75,7 +77,7 @@ def Comp_seq(old,new):
   return counter_diff
 
 
-def chose_mut(seq):
+def chose_mut(seq):  # chosing one of the three mot 
     index = random.randrange(1, 101)
     if (index==99):
       return Insert_BASE(seq), "Insertion"
@@ -103,22 +105,26 @@ index=0
 total_generations = 0
 
 for i in range(1000):
-
     generations = 0
+    current_dna = dna  # Start each run with the original dna
 
     while True:
         generations += 1
+        
+        # Check if there is mutation
+        if random.randint(1, 10000) == 1:
+            mutated_dna, mut_type = chose_mut(current_dna) # Mutate DNA
 
-        mutated_dna, mut_type = chose_mut(dna)
+            if mut_type == "Insertion" or mut_type == "Deletion":
+                break 
 
-        if mut_type == "Insertion" or mut_type == "Deletion":
-            break
+            mutated_rna = DNA_RNA_Cod(mutated_dna)
+            mutated_protein = RNA_Protein(mutated_rna, codon_aa_dict)
 
-        mutated_rna = DNA_RNA_Cod(mutated_dna)
-        mutated_protein = RNA_Protein(mutated_rna, codon_aa_dict)
-
-        if Comp_seq(protin, mutated_protein) > 0:
-            break
+            if Comp_seq(protin, mutated_protein) > 0:
+                break 
+            else:
+                current_dna = mutated_dna 
 
     total_generations += generations
 
